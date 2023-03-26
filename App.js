@@ -12,10 +12,21 @@ import { theme } from "./colors";
 export default function App() {
   const [isActive, setIsActive] = useState("work");
   const [text, setText] = useState("");
+  const [toDos, setToDos] = useState({});
   const handelActiveMenu = (menu) => {
     setIsActive(menu);
   };
   const onChanageText = (payload) => setText(payload);
+  const addToDo = () => {
+    if (text === "") {
+      return;
+    }
+    const newToDos = Object.assign({}, toDos, {
+      [Date.now]: { text, work: isActive === "work" ? true : false },
+    });
+    setToDos(newToDos);
+    setText("");
+  };
 
   return (
     <View style={styles.container}>
@@ -44,7 +55,9 @@ export default function App() {
       </View>
       <View>
         <TextInput
+          onSubmitEditing={addToDo}
           onChangeText={onChanageText}
+          returnKeyType="done"
           value={text}
           placeholder={
             isActive === "work" ? "Add a To Do" : "Where do you want to go?"
