@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -10,17 +11,41 @@ import {
 } from "react-native";
 import { theme } from "./colors";
 
+const STORAGE_KEY = "@toDos";
+
 export default function App() {
   const [isActive, setIsActive] = useState("work");
   const [text, setText] = useState("");
   const [toDos, setToDos] = useState({});
   const isWorkTodo = isActive === "work" ? true : false;
 
+  useEffect(() => {
+    loadToDos();
+  }, []);
+
+  const saveToDos = async (toSave) => {
+    try {
+      const jsonValue = JSON.stringify(toSave);
+      await AsyncStorage.setItem(STORAGE_KEY, jsonValue);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const loadToDos = async () => {
+    try {
+      const stringValue = await AsyncStorage.getItem(STORAGE_KEY);
+      setToDos(JSON.parse(stringValue));
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const handelActiveMenu = (menu) => {
     setIsActive(menu);
   };
   const onChanageText = (payload) => setText(payload);
-  const addToDo = () => {
+  const addToDo = async () => {
     if (text === "") {
       return;
     }
@@ -29,6 +54,7 @@ export default function App() {
       [Date.now()]: { text, isWorkTodo },
     };
     setToDos(newToDos);
+    await saveToDos(newToDos);
     setText("");
   };
 
@@ -109,7 +135,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 20,
     paddingVertical: 20,
-    backgroundColor: theme.gray,
+    backgroundColor: theme.deepGray,
     borderRadius: 15,
   },
   toDosText: {
