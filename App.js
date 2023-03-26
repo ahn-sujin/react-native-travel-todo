@@ -14,6 +14,8 @@ export default function App() {
   const [isActive, setIsActive] = useState("work");
   const [text, setText] = useState("");
   const [toDos, setToDos] = useState({});
+  const isWorkTodo = isActive === "work" ? true : false;
+
   const handelActiveMenu = (menu) => {
     setIsActive(menu);
   };
@@ -24,13 +26,11 @@ export default function App() {
     }
     const newToDos = {
       ...toDos,
-      [Date.now()]: { text, work: isActive === "work" ? true : false },
+      [Date.now()]: { text, isWorkTodo },
     };
     setToDos(newToDos);
     setText("");
   };
-
-  console.log(toDos);
 
   return (
     <View style={styles.container}>
@@ -69,11 +69,13 @@ export default function App() {
           style={styles.input}
         />
         <ScrollView>
-          {Object.keys(toDos).map((key) => (
-            <View key={key} style={styles.toDos}>
-              <Text style={styles.toDosText}>{toDos[key].text}</Text>
-            </View>
-          ))}
+          {Object.keys(toDos).map((key) =>
+            toDos[key].isWorkTodo === isWorkTodo ? (
+              <View key={key} style={styles.toDos}>
+                <Text style={styles.toDosText}>{toDos[key].text}</Text>
+              </View>
+            ) : null
+          )}
         </ScrollView>
       </View>
     </View>
