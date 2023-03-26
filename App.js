@@ -21,9 +21,10 @@ export default function App() {
     if (text === "") {
       return;
     }
-    const newToDos = Object.assign({}, toDos, {
+    const newToDos = {
+      ...toDos,
       [Date.now]: { text, work: isActive === "work" ? true : false },
-    });
+    };
     setToDos(newToDos);
     setText("");
   };
