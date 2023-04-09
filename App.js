@@ -9,6 +9,7 @@ import {
   TextInput,
   ScrollView,
   Alert,
+  Platform,
 } from "react-native";
 import { theme } from "./colors";
 import { Fontisto } from "@expo/vector-icons";
@@ -65,19 +66,29 @@ export default function App() {
   };
 
   const deleteToDo = (key) => {
-    Alert.alert("To Do를 삭제합니다.", "정말 삭제할까요?", [
-      {
-        text: "예",
+    if (Platform.OS === "web") {
+      const ok = confirm("To Do를 삭제할까요?");
+      if (ok) {
+        const newToDos = { ...toDos };
+        delete newToDos[key];
+        setToDos(newToDos);
+        saveToDos(newToDos);
+      }
+    } else {
+      Alert.alert("To Do를 삭제합니다.", "정말 삭제할까요?", [
+        {
+          text: "예",
 
-        onPress: () => {
-          const newToDos = { ...toDos };
-          delete newToDos[key];
-          setToDos(newToDos);
-          saveToDos(newToDos);
+          onPress: () => {
+            const newToDos = { ...toDos };
+            delete newToDos[key];
+            setToDos(newToDos);
+            saveToDos(newToDos);
+          },
         },
-      },
-      { text: "아니요", style: "destructive" },
-    ]);
+        { text: "아니요", style: "destructive" },
+      ]);
+    }
   };
 
   return (
